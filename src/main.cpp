@@ -66,7 +66,7 @@ int main() {
 
     glBindVertexArray(0);
 
-    Shader shader(VERTEX_SHADER_SRC, CELL_VORONOI_FRAG_SRC);
+    Shader shader(VERTEX_SHADER_SRC, SMOOTH_VORONOIT_FRAG_SRC);
     while (!glfwWindowShouldClose(window)) {
         processInput(window);
 

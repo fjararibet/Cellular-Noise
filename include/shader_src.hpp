@@ -72,7 +72,7 @@ void main() {
 }
 )";
 
-const char* CELL_VORONOI_FRAG_SRC = R"(
+const char *const CELL_VORONOI_FRAG_SRC = R"(
 // Author: @patriciogv
 // Title: CellularNoise
 
@@ -139,4 +139,169 @@ void main() {
 
     gl_FragColor = vec4(color,1.0);
 }
+)";
+
+const char *const DYNAMIC_CELL_VORONOI_FRAG_SRC = R"(
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+
+vec2 random2( vec2 p ) {
+    return fract(sin(vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3))))*43758.5453);
+}
+
+void main() {
+    vec2 st = gl_FragCoord.xy/u_resolution.xy;
+    st.x *= u_resolution.x/u_resolution.y;
+
+    vec3 color = vec3(.0);
+
+    // Scale
+    st *= 3.;
+
+    // Tile the space
+    vec2 i_st = floor(st);
+    vec2 f_st = fract(st);
+
+    float min_dist1 = 1.;  // minimum distance
+    float min_dist2 = 1.;  // second closest
+
+    for (int y= -1; y <= 1; y++) {
+        for (int x= -1; x <= 1; x++) {
+            // Neighbor place in the grid
+            vec2 neighbor = vec2(float(x),float(y));
+
+            // Random position from current + neighbor place in the grid
+            vec2 point = random2(i_st + neighbor);
+
+            // Animate the point
+            point = 0.5 + 0.5*sin(u_time + 6.23*point);
+
+            // Vector between the pixel and the point
+            vec2 diff = neighbor + point - f_st;
+
+            // Distance to the point
+            float dist = length(diff);
+
+            // Keep the closer distance
+            if (dist < min_dist1) {
+                min_dist2 = min_dist1;
+                min_dist1 = dist;
+            } else if (dist < min_dist2) {
+                min_dist2 = dist;
+            }
+
+        }
+    }
+
+    float edge_thresh = 0.01;
+
+    if (abs(min_dist1 - min_dist2) < edge_thresh) {
+        color = vec3(0.8, 0.8, 0.2); // yellow
+    } else {
+        color += min_dist1;
+        color += 1.0 - step(0.02, min_dist1);
+        color.b -= step(1.0, min_dist1);
+    }
+
+    // Draw cell center
+    color += 1.-step(.02, min_dist1);
+
+    // Show isolines
+    // color -= step(.7,abs(sin(27.0*min_dist1)))*.5;
+
+    gl_FragColor = vec4(color,1.0);
+}
+)";
+
+const char *const SMOOTH_VORONOIT_FRAG_SRC = R"(
+// The MIT License
+// Copyright © 2014 Inigo Quilez
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// Smooth Voronoi - avoiding aliasing, by replacing the usual min() function, which is
+// discontinuous, with a smooth version. That can help preventing some aliasing, and also
+// provides with more artistic control of the final procedural textures/models.
+
+// More Voronoi shaders:
+//
+// Exact edges:  https://www.shadertoy.com/view/ldl3W8
+// Hierarchical: https://www.shadertoy.com/view/Xll3zX
+// Smooth:       https://www.shadertoy.com/view/ldB3zc
+// Voronoise:    https://www.shadertoy.com/view/Xd23Dh
+
+uniform vec2 u_resolution;
+uniform vec2 u_time;
+
+float hash1( float n ) { return fract(sin(n)*43758.5453); }
+vec2  hash2( vec2  p ) { p = vec2( dot(p,vec2(127.1,311.7)), dot(p,vec2(269.5,183.3)) ); return fract(sin(p)*43758.5453); }
+
+// The parameter w controls the smoothness
+vec4 voronoi( in vec2 x, float w )
+{
+    vec2 n = floor( x );
+    vec2 f = fract( x );
+
+	vec4 m = vec4( 8.0, 0.0, 0.0, 0.0 );
+    for( int j=-2; j<=2; j++ )
+    for( int i=-2; i<=2; i++ )
+    {
+        vec2 g = vec2( float(i),float(j) );
+        vec2 o = hash2( n + g );
+		
+		// animate
+        o = 0.5 + 0.5*sin( u_time + 6.2831*o );
+
+        // distance to cell		
+		float d = length(g - f + o);
+		
+        // cell color
+		vec3 col = 0.5 + 0.5*sin( hash1(dot(n+g,vec2(7.0,113.0)))*2.5 + 3.5 + vec3(2.0,3.0,0.0));
+        // in linear space
+        col = col*col;
+        
+        // do the smooth min for colors and distances		
+		float h = smoothstep( -1.0, 1.0, (m.x-d)/w );
+	    m.x   = mix( m.x,     d, h ) - h*(1.0-h)*w/(1.0+3.0*w); // distance
+		m.yzw = mix( m.yzw, col, h ) - h*(1.0-h)*w/(1.0+3.0*w); // color
+    }
+	
+	return m;
+}
+
+void mainImage( out vec4 fragColor, in vec2 fragCoord )
+{
+    vec2  p = fragCoord/u_resolution.y;
+    float c = 0.5*u_resolution.x/u_resolution.y;
+	
+    vec4 v = voronoi( 6.0*p, p.x<c?0.001:0.3 );
+
+    // gamma
+    vec3 col = sqrt(v.yzw);
+	
+	col *= 1.0 - 0.8*v.x*step(p.y,0.33);
+	col *= mix(v.x,1.0,step(p.y,0.66));
+	
+    
+	col *= smoothstep( 0.003, 0.005, abs(p.y-0.33) );
+	col *= smoothstep( 0.003, 0.005, abs(p.y-0.66) );
+    col *= smoothstep( 0.003, 0.005, abs(p.x-c) );
+	
+    fragColor = vec4( col, 1.0 );
+}
+
+void main()
+{
+    vec2 fragCoord = gl_FragCoord.xy;
+    vec4 fragColor;
+
+    mainImage(fragColor, fragCoord);  // Call your function
+
+    gl_FragColor = fragColor;         // Output to screen
+}
+
 )";
