@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.18)
-project(CellularNoise LANGUAGES C CXX CUDA)
+project(CellularNoise LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -35,8 +35,3 @@ add_executable(CellularNoise ${SOURCES})
 
 target_include_directories(CellularNoise PRIVATE include/)
 target_link_libraries(CellularNoise PRIVATE glfw imgui)
-
-set_target_properties(CellularNoise PROPERTIES
-    CUDA_SEPARABLE_COMPILATION ON
-    CUDA_ARCHITECTURES native
-)
