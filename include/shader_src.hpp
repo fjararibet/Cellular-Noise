@@ -26,6 +26,7 @@ const char *const SMOOTH_VORONOIT_FRAG_SRC = R"(
 
 uniform vec2 u_resolution;
 uniform float u_time;
+uniform vec2 u_mouse;
 uniform bool fadeIn;
 uniform float fadeStrength;
 uniform float smoothness;
@@ -84,6 +85,30 @@ vec4 voronoi(in vec2 x, float w) {
         m.x = mix(m.x, d, h) - h * (1.0 - h) * w / (1.0 + 3.0 * w);
         m.yzw = mix(m.yzw, col, h) - h * (1.0 - h) * w / (1.0 + 3.0 * w);
     }
+    // Compute mouse as a cell
+    vec2 mouse_point = u_mouse / u_resolution.y;
+    vec2 mouse_x = scale * mouse_point;
+    vec2 mouse_cell = floor(mouse_x);
+    vec2 mouse_offset = fract(mouse_x);
+    float d = length(mouse_x - x);
+            
+    // cell color
+    vec3 col = 0.5 + 0.5*sin(
+        hash1(dot(mouse_cell,vec2(13.0,117.0)))
+        * colorFrequency + colorPhase + vec3(offsetR,offsetG,offsetB));
+
+    // make brighter
+    col *= 2.0;
+
+    // in linear space
+    col = col*col;
+    
+    // w controls the smoothness
+    // do the smooth min for colors and distances		
+    float h = smoothstep(-1.0, 1.0, (m.x - d) / w);
+    m.x = mix(m.x, d, h) - h * (1.0 - h) * w / (1.0 + 3.0 * w);
+    m.yzw = mix(m.yzw, col, h) - h * (1.0 - h) * w / (1.0 + 3.0 * w);
+    
     return m;
 }
 
