@@ -250,6 +250,7 @@ uniform float phaseSpread;
 uniform bool showIsoLines;
 uniform float isoLineThickness;
 uniform float isoLineIntensity;
+uniform float isoLineSpacing;
 
 float hash1( float n ) { return fract(sin(n)*43758.5453); }
 vec2  hash2( vec2  p ) { p = vec2( dot(p,vec2(127.1,311.7)), dot(p,vec2(269.5,183.3)) ); return fract(sin(p)*43758.5453); }
@@ -307,7 +308,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     }
 	
     if (showIsoLines) {
-        color -= step(isoLineThickness,abs(sin(27.0*v.x)))*isoLineIntensity;
+        color -= step(isoLineThickness,abs(sin(isoLineSpacing*v.x)))*isoLineIntensity;
     }
     fragColor = vec4(color, 1.0);
 }

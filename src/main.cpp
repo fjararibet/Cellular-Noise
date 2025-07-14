@@ -2,12 +2,12 @@
 
 #include "shader.hpp"
 #include "shader_src.hpp"
+#include "style.hpp"
 #include <GLFW/glfw3.h>
 #include <algorithm>
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
-#include "style.hpp"
 #include <iostream>
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
@@ -49,7 +49,6 @@ int main() {
     enemyMouseStyle();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
-
 
     float vertices[] = {
         1.0f,  1.0f,  0.0f, // top right
@@ -97,6 +96,7 @@ int main() {
     float ColorEdit4 = 0.f;
     float isoLineThickness = 0.7f;
     float isoLineIntensity = 0.7f;
+    float isoLineSpacing = 27.f;
     while (!glfwWindowShouldClose(window)) {
         processInput(window);
 
@@ -144,8 +144,8 @@ int main() {
         shader.setFloat("isoLineThickness", 1.0 - isoLineThickness);
         ImGui::SliderFloat("Intensity", &isoLineIntensity, 0.0f, 1.f);
         shader.setFloat("isoLineIntensity", isoLineIntensity);
-
-
+        ImGui::SliderFloat("Spacing", &isoLineSpacing, 0.0f, 100.f);
+        shader.setFloat("isoLineSpacing", 100.f - isoLineSpacing);
 
         ImGui::SeparatorText("Fade");
         ImGui::RadioButton("Fade In", &fadeIn, 0);
