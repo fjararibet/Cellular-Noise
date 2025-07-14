@@ -85,6 +85,7 @@ int main() {
     float smoothness = 0.1f;
     int fadeIn = 1;
     int scale = 10;
+    float speed = 10;
     while (!glfwWindowShouldClose(window)) {
         processInput(window);
 
@@ -131,6 +132,8 @@ int main() {
         shader.setFloat("smoothness", smoothness);
         ImGui::SliderInt("Scale", &scale, 0, 100);
         shader.setFloat("scale", (float)scale);
+        ImGui::SliderFloat("Speed", &speed, 0.f, 100.f);
+        shader.setFloat("speed", speed / 2);
 
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

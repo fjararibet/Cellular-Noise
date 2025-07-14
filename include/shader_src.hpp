@@ -240,6 +240,7 @@ uniform bool fadeIn;
 uniform float fadeStrength;
 uniform float smoothness;
 uniform float scale;
+uniform float speed;
 
 float hash1( float n ) { return fract(sin(n)*43758.5453); }
 vec2  hash2( vec2  p ) { p = vec2( dot(p,vec2(127.1,311.7)), dot(p,vec2(269.5,183.3)) ); return fract(sin(p)*43758.5453); }
@@ -258,7 +259,7 @@ vec4 voronoi( in vec2 x, float w )
         vec2 o = hash2(n + g);
 		
         // animate
-        o = 0.5 + 0.5*sin(u_time + 6.2831*o);
+        o = 0.5 + 0.5*sin(u_time * speed + 6.2831*o);
 
         // distance to cell		
         float d = length(g - f + o);
@@ -280,10 +281,7 @@ vec4 voronoi( in vec2 x, float w )
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
     vec2  p = fragCoord/u_resolution.y;
-    float c = 0.5*u_resolution.x/u_resolution.y;
-	
-    float grid_size = scale;
-    vec4 v = voronoi(grid_size*p, smoothness);
+    vec4 v = voronoi(scale*p, smoothness);
 
     // gamma
     vec3 col = sqrt(v.yzw);
