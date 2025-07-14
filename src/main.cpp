@@ -90,6 +90,7 @@ int main() {
     float offsetR = 0.f;
     float offsetG = 4.1f;
     float offsetB = 3.7;
+    float phaseSpread = 6.2831;
     while (!glfwWindowShouldClose(window)) {
         processInput(window);
 
@@ -138,6 +139,8 @@ int main() {
         shader.setFloat("scale", (float)scale);
         ImGui::SliderFloat("Speed", &speed, 0.f, 100.f);
         shader.setFloat("speed", speed / 5);
+        ImGui::SliderFloat("Phase Spread", &phaseSpread, 0.f, 6.2831f);
+        shader.setFloat("phaseSpread", phaseSpread);
 
         ImGui::SeparatorText("Color");
         ImGui::SliderFloat("Frequency", &colorFrequency, 0.f, 10.f);

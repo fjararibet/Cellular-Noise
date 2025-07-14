@@ -246,6 +246,7 @@ uniform float colorPhase;
 uniform float offsetR;
 uniform float offsetG;
 uniform float offsetB;
+uniform float phaseSpread;
 
 float hash1( float n ) { return fract(sin(n)*43758.5453); }
 vec2  hash2( vec2  p ) { p = vec2( dot(p,vec2(127.1,311.7)), dot(p,vec2(269.5,183.3)) ); return fract(sin(p)*43758.5453); }
@@ -264,7 +265,7 @@ vec4 voronoi( in vec2 x, float w )
         vec2 o = hash2(n + g);
 		
         // animate
-        o = 0.5 + 0.5*sin(u_time * speed + 6.2831*o);
+        o = 0.5 + 0.5*sin(u_time * speed + phaseSpread * o);
 
         // distance to cell		
         float d = length(g - f + o);
