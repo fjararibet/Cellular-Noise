@@ -235,7 +235,10 @@ const char *const SMOOTH_VORONOIT_FRAG_SRC = R"(
 // Voronoise:    https://www.shadertoy.com/view/Xd23Dh
 
 uniform vec2 u_resolution;
-uniform vec2 u_time;
+uniform float u_time;
+uniform bool fadeIn;
+uniform float fadeStrength;
+uniform float smoothness;
 
 float hash1( float n ) { return fract(sin(n)*43758.5453); }
 vec2  hash2( vec2  p ) { p = vec2( dot(p,vec2(127.1,311.7)), dot(p,vec2(269.5,183.3)) ); return fract(sin(p)*43758.5453); }
@@ -280,13 +283,19 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 	
     float w = p.x < c ? 0.001 : 0.3; 
     float grid_size = 6.0;
-    vec4 v = voronoi(grid_size*p, w);
+    vec4 v = voronoi(grid_size*p, smoothness);
 
     // gamma
     vec3 col = sqrt(v.yzw);
 	
-	  col *= 1.0 - 0.8 * v.x * step(p.y, 0.33);
-    col *= mix(v.x, 1.0, step(p.y, 0.66));
+	  // col *= 1.0 - 0.8 * v.x * step(p.y, 0.33);
+    if (fadeIn) {
+        col *= 1.0 - fadeStrength * v.x;
+    }
+    else {
+        col *= mix(0.0, v.x, fadeStrength);
+    }
+    //col *= mix(1.0, v.x, step(p.y, 0.66));
 	
     
     // col *= smoothstep(0.003, 0.005, abs(p.y-0.33) );

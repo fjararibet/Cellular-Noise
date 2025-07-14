@@ -3,11 +3,11 @@
 #include "shader.hpp"
 #include "shader_src.hpp"
 #include <GLFW/glfw3.h>
+#include <algorithm>
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <iostream>
-#include <algorithm>
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -81,6 +81,10 @@ int main() {
 
     Shader shader(VERTEX_SHADER_SRC, SMOOTH_VORONOIT_FRAG_SRC);
     glViewport(0, 0, GAME_WIDTH, SCR_HEIGHT);
+    float fadeStrength = 0.5f;
+    float smoothness = 0.5f;
+    int fadeIn = 1;
+    shader.use();
     while (!glfwWindowShouldClose(window)) {
         processInput(window);
 
@@ -114,6 +118,16 @@ int main() {
         mouseY = height - mouseY;
         shader.set2Float("u_mouse", (float)mouseX, (float)mouseY);
         shader.setFloat("u_time", glfwGetTime());
+
+        ImGui::RadioButton("Fade In", &fadeIn, 0);
+        ImGui::RadioButton("Fade out", &fadeIn, 1);
+        shader.setBool("fadeIn", (bool)fadeIn);
+
+        ImGui::SliderFloat("Fade Strength", &fadeStrength, 0.f, 1.f);
+        shader.setFloat("fadeStrength", fadeStrength);
+        ImGui::SliderFloat("Smoothness", &smoothness, 0.f, 1.f);
+        shader.setFloat("smoothness", smoothness);
+
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
