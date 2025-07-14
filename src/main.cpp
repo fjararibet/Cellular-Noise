@@ -93,6 +93,8 @@ int main() {
     float offsetG = 4.1f;
     float offsetB = 3.7;
     float phaseSpread = 6.2831f;
+    bool showIsoLines = false;
+    float ColorEdit4 = 0.f;
     while (!glfwWindowShouldClose(window)) {
         processInput(window);
 
@@ -130,9 +132,12 @@ int main() {
         ImGui::SeparatorText("Visuals");
         ImGui::SliderFloat("Smoothness", &smoothness, 0.f, 1.f);
         shader.setFloat("smoothness", smoothness);
-
         ImGui::SliderInt("Scale", &scale, 0, 100);
         shader.setFloat("scale", (float)scale);
+        ImGui::Checkbox("Show Iso lines", &showIsoLines);
+        shader.setFloat("showIsoLines", showIsoLines);
+
+
         ImGui::SeparatorText("Fade");
         ImGui::RadioButton("Fade In", &fadeIn, 0);
         ImGui::RadioButton("Fade out", &fadeIn, 1);

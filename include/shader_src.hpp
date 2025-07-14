@@ -247,6 +247,7 @@ uniform float offsetR;
 uniform float offsetG;
 uniform float offsetB;
 uniform float phaseSpread;
+uniform bool showIsoLines;
 
 float hash1( float n ) { return fract(sin(n)*43758.5453); }
 vec2  hash2( vec2  p ) { p = vec2( dot(p,vec2(127.1,311.7)), dot(p,vec2(269.5,183.3)) ); return fract(sin(p)*43758.5453); }
@@ -294,16 +295,19 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     vec4 v = voronoi(scale*p, smoothness);
 
     // gamma
-    vec3 col = sqrt(v.yzw);
+    vec3 color = sqrt(v.yzw);
 	
     if (fadeIn) {
-        col *= 1.0 - fadeStrength * v.x;
+        color *= 1.0 - fadeStrength * v.x;
     }
     else {
-        col *= mix(v.x, 0., fadeStrength);
+        color *= mix(v.x, 0., fadeStrength);
     }
 	
-    fragColor = vec4(col, 1.0 );
+    if (showIsoLines) {
+        color -= step(.7,abs(sin(27.0*v.x)))*.5;
+    }
+    fragColor = vec4(color, 1.0);
 }
 
 void main()
