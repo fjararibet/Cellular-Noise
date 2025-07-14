@@ -98,7 +98,7 @@ int main() {
         int content_width = std::max(1, display_w - (int)UI_WIDTH);
         glViewport(0, 0, content_width, display_h);
 
-        // Set ImGui UI window on the right side
+        // Set UI on the right side
         ImGui::SetNextWindowPos(ImVec2(content_width, 0), ImGuiCond_Always);
         ImGui::SetNextWindowSize(ImVec2(UI_WIDTH, display_h), ImGuiCond_Always);
 
@@ -119,12 +119,14 @@ int main() {
         shader.set2Float("u_mouse", (float)mouseX, (float)mouseY);
         shader.setFloat("u_time", glfwGetTime());
 
+        ImGui::SeparatorText("Fade");
         ImGui::RadioButton("Fade In", &fadeIn, 0);
         ImGui::RadioButton("Fade out", &fadeIn, 1);
         shader.setBool("fadeIn", (bool)fadeIn);
 
         ImGui::SliderFloat("Fade Strength", &fadeStrength, 0.f, 1.f);
         shader.setFloat("fadeStrength", fadeStrength);
+        ImGui::Separator();
         ImGui::SliderFloat("Smoothness", &smoothness, 0.f, 1.f);
         shader.setFloat("smoothness", smoothness);
         ImGui::SliderInt("Scale", &scale, 0, 100);

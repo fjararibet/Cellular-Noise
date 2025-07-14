@@ -288,7 +288,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     // gamma
     vec3 col = sqrt(v.yzw);
 	
-	  // col *= 1.0 - 0.8 * v.x * step(p.y, 0.33);
     if (fadeIn) {
         col *= 1.0 - fadeStrength * v.x;
     }
