@@ -87,10 +87,10 @@ int main() {
     float speed = 25.f;
     float colorFrequency = 2.5f;
     float colorPhase = 5.0f;
-    float offsetR = 0.f;
+    float offsetR = 6.2831f;
     float offsetG = 4.1f;
     float offsetB = 3.7;
-    float phaseSpread = 6.2831;
+    float phaseSpread = 6.2831f;
     while (!glfwWindowShouldClose(window)) {
         processInput(window);
 
@@ -125,6 +125,12 @@ int main() {
         shader.set2Float("u_mouse", (float)mouseX, (float)mouseY);
         shader.setFloat("u_time", glfwGetTime());
 
+        ImGui::SeparatorText("Visuals");
+        ImGui::SliderFloat("Smoothness", &smoothness, 0.f, 1.f);
+        shader.setFloat("smoothness", smoothness);
+
+        ImGui::SliderInt("Scale", &scale, 0, 100);
+        shader.setFloat("scale", (float)scale);
         ImGui::SeparatorText("Fade");
         ImGui::RadioButton("Fade In", &fadeIn, 0);
         ImGui::RadioButton("Fade out", &fadeIn, 1);
@@ -133,10 +139,8 @@ int main() {
         ImGui::SliderFloat("Fade Strength", &fadeStrength, 0.f, 1.f);
         shader.setFloat("fadeStrength", fadeStrength);
         ImGui::Separator();
-        ImGui::SliderFloat("Smoothness", &smoothness, 0.f, 1.f);
-        shader.setFloat("smoothness", smoothness);
-        ImGui::SliderInt("Scale", &scale, 0, 100);
-        shader.setFloat("scale", (float)scale);
+
+        ImGui::SeparatorText("Behavior");
         ImGui::SliderFloat("Speed", &speed, 0.f, 100.f);
         shader.setFloat("speed", speed / 5);
         ImGui::SliderFloat("Phase Spread", &phaseSpread, 0.f, 6.2831f);
