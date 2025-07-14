@@ -85,7 +85,7 @@ int main() {
     float smoothness = 0.3;
     int fadeIn = 1;
     int scale = 10;
-    float speed = 25.f;
+    float speed = 10.f;
     float colorFrequency = 2.5f;
     float colorPhase = 5.0f;
     float offsetR = 6.2831f;
@@ -96,7 +96,7 @@ int main() {
     float ColorEdit4 = 0.f;
     float isoLineThickness = 0.7f;
     float isoLineIntensity = 0.7f;
-    float isoLineSpacing = 27.f;
+    float isoLineSpacing = 70.f;
     while (!glfwWindowShouldClose(window)) {
         processInput(window);
 

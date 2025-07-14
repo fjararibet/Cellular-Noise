@@ -318,9 +318,9 @@ void main()
     vec2 fragCoord = gl_FragCoord.xy;
     vec4 fragColor;
 
-    mainImage(fragColor, fragCoord);  // Call your function
+    mainImage(fragColor, fragCoord);
 
-    gl_FragColor = fragColor;         // Output to screen
+    gl_FragColor = fragColor;
 }
 
 )";
