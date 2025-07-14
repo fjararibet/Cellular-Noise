@@ -7,6 +7,7 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
+#include "style.hpp"
 #include <iostream>
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
@@ -45,9 +46,10 @@ int main() {
     ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
     (void)io;
-    ImGui::StyleColorsDark();
+    enemyMouseStyle();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
+
 
     float vertices[] = {
         1.0f,  1.0f,  0.0f, // top right
@@ -136,7 +138,7 @@ int main() {
         ImGui::RadioButton("Fade out", &fadeIn, 1);
         shader.setBool("fadeIn", (bool)fadeIn);
 
-        ImGui::SliderFloat("Fade Strength", &fadeStrength, 0.f, 1.f);
+        ImGui::SliderFloat("Strength", &fadeStrength, 0.f, 1.f);
         shader.setFloat("fadeStrength", fadeStrength);
         ImGui::Separator();
 
