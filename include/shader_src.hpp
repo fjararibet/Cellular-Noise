@@ -243,31 +243,31 @@ vec2  hash2( vec2  p ) { p = vec2( dot(p,vec2(127.1,311.7)), dot(p,vec2(269.5,18
 // The parameter w controls the smoothness
 vec4 voronoi( in vec2 x, float w )
 {
-    vec2 n = floor( x );
-    vec2 f = fract( x );
+    vec2 n = floor(x);
+    vec2 f = fract(x);
 
-	vec4 m = vec4( 8.0, 0.0, 0.0, 0.0 );
+    vec4 m = vec4( 8.0, 0.0, 0.0, 0.0 );
     for( int j=-2; j<=2; j++ )
     for( int i=-2; i<=2; i++ )
     {
-        vec2 g = vec2( float(i),float(j) );
-        vec2 o = hash2( n + g );
+        vec2 g = vec2(float(i), float(j));
+        vec2 o = hash2(n + g);
 		
-		// animate
-        o = 0.5 + 0.5*sin( u_time + 6.2831*o );
+        // animate
+        o = 0.5 + 0.5*sin(u_time + 6.2831*o);
 
         // distance to cell		
-		float d = length(g - f + o);
+        float d = length(g - f + o);
 		
         // cell color
-		vec3 col = 0.5 + 0.5*sin( hash1(dot(n+g,vec2(7.0,113.0)))*2.5 + 3.5 + vec3(2.0,3.0,0.0));
+        vec3 col = 0.5 + 0.5*sin(hash1(dot(n+g,vec2(7.0,113.0)))*2.5 + 3.5 + vec3(2.0,3.0,0.0));
         // in linear space
         col = col*col;
         
         // do the smooth min for colors and distances		
-		float h = smoothstep( -1.0, 1.0, (m.x-d)/w );
-	    m.x   = mix( m.x,     d, h ) - h*(1.0-h)*w/(1.0+3.0*w); // distance
-		m.yzw = mix( m.yzw, col, h ) - h*(1.0-h)*w/(1.0+3.0*w); // color
+        float h = smoothstep(-1.0, 1.0, (m.x - d) / w);
+        m.x = mix(m.x, d, h) - h * (1.0 - h) * w / (1.0 + 3.0 * w);
+        m.yzw = mix(m.yzw, col, h) - h * (1.0 - h) * w / (1.0 + 3.0 * w);
     }
 	
 	return m;
@@ -278,20 +278,22 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     vec2  p = fragCoord/u_resolution.y;
     float c = 0.5*u_resolution.x/u_resolution.y;
 	
-    vec4 v = voronoi( 6.0*p, p.x<c?0.001:0.3 );
+    float w = p.x < c ? 0.001 : 0.3; 
+    float grid_size = 6.0;
+    vec4 v = voronoi(grid_size*p, w);
 
     // gamma
     vec3 col = sqrt(v.yzw);
 	
-	col *= 1.0 - 0.8*v.x*step(p.y,0.33);
-	col *= mix(v.x,1.0,step(p.y,0.66));
+	  col *= 1.0 - 0.8 * v.x * step(p.y, 0.33);
+    col *= mix(v.x, 1.0, step(p.y, 0.66));
 	
     
-	col *= smoothstep( 0.003, 0.005, abs(p.y-0.33) );
-	col *= smoothstep( 0.003, 0.005, abs(p.y-0.66) );
-    col *= smoothstep( 0.003, 0.005, abs(p.x-c) );
+    // col *= smoothstep(0.003, 0.005, abs(p.y-0.33) );
+    // col *= smoothstep(0.003, 0.005, abs(p.y-0.66) );
+    // col *= smoothstep(0.003, 0.005, abs(p.x-c) );
 	
-    fragColor = vec4( col, 1.0 );
+    fragColor = vec4(col, 1.0 );
 }
 
 void main()
