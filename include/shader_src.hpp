@@ -293,14 +293,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
         col *= 1.0 - fadeStrength * v.x;
     }
     else {
-        col *= mix(0.0, v.x, fadeStrength);
+        col *= mix(v.x, 0., fadeStrength);
     }
-    //col *= mix(1.0, v.x, step(p.y, 0.66));
-	
-    
-    // col *= smoothstep(0.003, 0.005, abs(p.y-0.33) );
-    // col *= smoothstep(0.003, 0.005, abs(p.y-0.66) );
-    // col *= smoothstep(0.003, 0.005, abs(p.x-c) );
 	
     fragColor = vec4(col, 1.0 );
 }

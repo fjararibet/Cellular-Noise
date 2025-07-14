@@ -82,9 +82,9 @@ int main() {
     Shader shader(VERTEX_SHADER_SRC, SMOOTH_VORONOIT_FRAG_SRC);
     glViewport(0, 0, GAME_WIDTH, SCR_HEIGHT);
     float fadeStrength = 0.5f;
-    float smoothness = 0.5f;
+    float smoothness = 0.1f;
     int fadeIn = 1;
-    int scale = 6;
+    int scale = 10;
     while (!glfwWindowShouldClose(window)) {
         processInput(window);
 
