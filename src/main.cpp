@@ -95,6 +95,7 @@ int main() {
     float phaseSpread = 6.2831f;
     bool showIsoLines = false;
     float ColorEdit4 = 0.f;
+    float isoLineThickness = 0.7f;
     while (!glfwWindowShouldClose(window)) {
         processInput(window);
 
@@ -134,8 +135,13 @@ int main() {
         shader.setFloat("smoothness", smoothness);
         ImGui::SliderInt("Scale", &scale, 0, 100);
         shader.setFloat("scale", (float)scale);
-        ImGui::Checkbox("Show Iso lines", &showIsoLines);
+
+        ImGui::SeparatorText("Iso Lines");
+        ImGui::Checkbox("Show", &showIsoLines);
         shader.setFloat("showIsoLines", showIsoLines);
+        ImGui::SliderFloat("Thickness", &isoLineThickness, 0.0f, 0.9f);
+        shader.setFloat("isoLineThickness", 1.0 - isoLineThickness);
+
 
 
         ImGui::SeparatorText("Fade");
