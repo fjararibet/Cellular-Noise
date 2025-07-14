@@ -96,6 +96,7 @@ int main() {
     bool showIsoLines = false;
     float ColorEdit4 = 0.f;
     float isoLineThickness = 0.7f;
+    float isoLineIntensity = 0.7f;
     while (!glfwWindowShouldClose(window)) {
         processInput(window);
 
@@ -139,8 +140,10 @@ int main() {
         ImGui::SeparatorText("Iso Lines");
         ImGui::Checkbox("Show", &showIsoLines);
         shader.setFloat("showIsoLines", showIsoLines);
-        ImGui::SliderFloat("Thickness", &isoLineThickness, 0.0f, 0.9f);
+        ImGui::SliderFloat("Thickness", &isoLineThickness, 0.0f, 1.0f);
         shader.setFloat("isoLineThickness", 1.0 - isoLineThickness);
+        ImGui::SliderFloat("Intensity", &isoLineIntensity, 0.0f, 1.f);
+        shader.setFloat("isoLineIntensity", isoLineIntensity);
 
 
 
