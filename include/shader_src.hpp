@@ -239,6 +239,7 @@ uniform float u_time;
 uniform bool fadeIn;
 uniform float fadeStrength;
 uniform float smoothness;
+uniform float scale;
 
 float hash1( float n ) { return fract(sin(n)*43758.5453); }
 vec2  hash2( vec2  p ) { p = vec2( dot(p,vec2(127.1,311.7)), dot(p,vec2(269.5,183.3)) ); return fract(sin(p)*43758.5453); }
@@ -281,8 +282,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     vec2  p = fragCoord/u_resolution.y;
     float c = 0.5*u_resolution.x/u_resolution.y;
 	
-    float w = p.x < c ? 0.001 : 0.3; 
-    float grid_size = 6.0;
+    float grid_size = scale;
     vec4 v = voronoi(grid_size*p, smoothness);
 
     // gamma
