@@ -85,7 +85,12 @@ int main() {
     float smoothness = 0.1f;
     int fadeIn = 1;
     int scale = 10;
-    float speed = 10;
+    float speed = 5;
+    float colorFrequency = 2.5f;
+    float colorPhase = 3.5f;
+    float offsetR = 2.f;
+    float offsetG = 3.f;
+    float offsetB = 0.f;
     while (!glfwWindowShouldClose(window)) {
         processInput(window);
 
@@ -134,6 +139,18 @@ int main() {
         shader.setFloat("scale", (float)scale);
         ImGui::SliderFloat("Speed", &speed, 0.f, 100.f);
         shader.setFloat("speed", speed / 2);
+
+        ImGui::SeparatorText("Color");
+        ImGui::SliderFloat("Frequency", &colorFrequency, 0.f, 10.f);
+        shader.setFloat("colorFrequency", colorFrequency);
+        ImGui::SliderFloat("Phase", &colorPhase, 0.f, 6.2831f);
+        shader.setFloat("colorPhase", colorPhase);
+        ImGui::SliderFloat("Red Offset", &offsetR, 0.f, 6.2831f);
+        shader.setFloat("offsetR", offsetR);
+        ImGui::SliderFloat("Blue Offset", &offsetG, 0.f, 6.2831f);
+        shader.setFloat("offsetG", offsetG);
+        ImGui::SliderFloat("Green Offset", &offsetB, 0.f, 6.2831f);
+        shader.setFloat("offsetB", offsetB);
 
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

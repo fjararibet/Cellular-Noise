@@ -241,6 +241,11 @@ uniform float fadeStrength;
 uniform float smoothness;
 uniform float scale;
 uniform float speed;
+uniform float colorFrequency;
+uniform float colorPhase;
+uniform float offsetR;
+uniform float offsetG;
+uniform float offsetB;
 
 float hash1( float n ) { return fract(sin(n)*43758.5453); }
 vec2  hash2( vec2  p ) { p = vec2( dot(p,vec2(127.1,311.7)), dot(p,vec2(269.5,183.3)) ); return fract(sin(p)*43758.5453); }
@@ -265,7 +270,11 @@ vec4 voronoi( in vec2 x, float w )
         float d = length(g - f + o);
 		
         // cell color
-        vec3 col = 0.5 + 0.5*sin(hash1(dot(n+g,vec2(7.0,113.0)))*2.5 + 3.5 + vec3(2.0,3.0,0.0));
+        vec3 col = 0.5 + 0.5*sin(
+            hash1(dot(n+g,vec2(7.0,113.0)))
+            * colorFrequency + colorPhase + vec3(offsetR,offsetG,offsetB));
+
+
         // in linear space
         col = col*col;
         
