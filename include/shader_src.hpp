@@ -42,18 +42,24 @@ uniform float isoLineThickness;
 uniform float isoLineIntensity;
 uniform float isoLineSpacing;
 
-float hash1( float n ) { return fract(sin(n)*43758.5453); }
-vec2  hash2( vec2  p ) { p = vec2( dot(p,vec2(127.1,311.7)), dot(p,vec2(269.5,183.3)) ); return fract(sin(p)*43758.5453); }
+float hash1(float n) { 
+    return fract(sin(n) * 43758.5453);
+}
+vec2 hash2(vec2 p) {
+    p = vec2(
+        dot(p, vec2(127.1, 311.7)), 
+        dot(p, vec2(269.5, 183.3))
+    );
+    return fract(sin(p) * 43758.5453); 
+}
 
-// The parameter w controls the smoothness
-vec4 voronoi( in vec2 x, float w )
-{
+vec4 voronoi(in vec2 x, float w) {
     vec2 n = floor(x);
     vec2 f = fract(x);
 
-    vec4 m = vec4( 8.0, 0.0, 0.0, 0.0 );
-    for( int j=-2; j<=2; j++ )
-    for( int i=-2; i<=2; i++ )
+    vec4 m = vec4(8.0, 0.0, 0.0, 0.0);
+    for(int i=-2; i<=2; i++)
+    for(int j=-2; j<=2; j++)
     {
         vec2 g = vec2(float(i), float(j));
         vec2 o = hash2(n + g);
@@ -69,29 +75,27 @@ vec4 voronoi( in vec2 x, float w )
             hash1(dot(n+g,vec2(7.0,113.0)))
             * colorFrequency + colorPhase + vec3(offsetR,offsetG,offsetB));
 
-
         // in linear space
         col = col*col;
         
+        // w controls the smoothness
         // do the smooth min for colors and distances		
         float h = smoothstep(-1.0, 1.0, (m.x - d) / w);
         m.x = mix(m.x, d, h) - h * (1.0 - h) * w / (1.0 + 3.0 * w);
         m.yzw = mix(m.yzw, col, h) - h * (1.0 - h) * w / (1.0 + 3.0 * w);
     }
-	
-	return m;
+    return m;
 }
 
-void mainImage( out vec4 fragColor, in vec2 fragCoord )
-{
-    vec2  p = fragCoord/u_resolution.y;
-    vec4 v = voronoi(scale*p, smoothness);
+void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+    vec2 p = fragCoord / u_resolution.y;
+    vec4 v = voronoi(scale * p, smoothness);
 
     // gamma
     vec3 color = sqrt(v.yzw);
 	
     if (fadeIn) {
-        color *= 1.0 - fadeStrength * v.x;
+        color *= mix(1., 0., fadeStrength * v.x);
     }
     else {
         color *= mix(v.x, 0., fadeStrength);
@@ -103,8 +107,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     fragColor = vec4(color, 1.0);
 }
 
-void main()
-{
+void main() {
     vec2 fragCoord = gl_FragCoord.xy;
     vec4 fragColor;
 
