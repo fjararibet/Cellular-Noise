@@ -63,7 +63,6 @@ int main() {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
-    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -82,15 +81,15 @@ int main() {
     Shader shader(VERTEX_SHADER_SRC, SMOOTH_VORONOIT_FRAG_SRC);
     glViewport(0, 0, GAME_WIDTH, SCR_HEIGHT);
     float fadeStrength = 0.5f;
-    float smoothness = 0.1f;
+    float smoothness = 0.3;
     int fadeIn = 1;
     int scale = 10;
-    float speed = 5;
+    float speed = 25.f;
     float colorFrequency = 2.5f;
-    float colorPhase = 3.5f;
-    float offsetR = 2.f;
-    float offsetG = 3.f;
-    float offsetB = 0.f;
+    float colorPhase = 5.0f;
+    float offsetR = 0.f;
+    float offsetG = 4.1f;
+    float offsetB = 3.7;
     while (!glfwWindowShouldClose(window)) {
         processInput(window);
 
@@ -138,7 +137,7 @@ int main() {
         ImGui::SliderInt("Scale", &scale, 0, 100);
         shader.setFloat("scale", (float)scale);
         ImGui::SliderFloat("Speed", &speed, 0.f, 100.f);
-        shader.setFloat("speed", speed / 2);
+        shader.setFloat("speed", speed / 5);
 
         ImGui::SeparatorText("Color");
         ImGui::SliderFloat("Frequency", &colorFrequency, 0.f, 10.f);
@@ -163,14 +162,10 @@ int main() {
         glfwPollEvents();
     }
 
-    // optional: de-allocate all resources once they've outlived their purpose:
-    // ------------------------------------------------------------------------
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
 
-    // glfw: terminate, clearing all previously allocated GLFW resources.
-    // ------------------------------------------------------------------
     glfwTerminate();
     return 0;
 }
